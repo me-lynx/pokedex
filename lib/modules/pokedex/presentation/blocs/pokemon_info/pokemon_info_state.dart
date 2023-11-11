@@ -2,7 +2,9 @@ import 'package:pokedex/modules/pokedex/data/models/pokemon.dart';
 
 abstract class PokemonInfoState {}
 
-class PokemonInfoLoading extends PokemonInfoState {}
+class PokemonInfoLoading extends PokemonInfoState {
+  List<Object> get props => [];
+}
 
 class PokemonInfoLoaded extends PokemonInfoState {
   Pokemon pokemon;

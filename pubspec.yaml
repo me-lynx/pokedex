@@ -36,6 +36,7 @@ dependencies:
   get_it: ^7.6.4  
   google_fonts: ^6.1.0
   tuple: ^2.0.2
+  mockito: ^5.4.2
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -46,6 +47,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  bloc_test: ^9.1.5
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

@@ -3,16 +3,16 @@ import 'dart:convert';
 import 'package:pokedex/modules/pokedex/data/models/pokemon.dart';
 import 'package:pokedex/modules/pokedex/data/models/pokemon_result.dart';
 import 'package:http/http.dart' as http;
-import 'package:pokedex/modules/pokedex/data/repositories/pokemon_repository_interface.dart';
 import 'package:tuple/tuple.dart';
 
-class PokemonRepository implements IPokemonRepository {
+class PokemonRepository {
   List<Pokemon> pokemons = [];
+  final http.Client client;
   String url = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=100";
+  PokemonRepository({http.Client? client}) : client = client ?? http.Client();
 
-  @override
   Future<List<Tuple2<Pokemon, int>>> fetchPokemons() async {
-    var response = await http.get(Uri.parse(url));
+    var response = await client.get(Uri.parse(url));
     if (response.statusCode != 200) {
       throw Exception('Failed to fetch pokemons: ${response.statusCode}');
     }
@@ -40,11 +40,10 @@ class PokemonRepository implements IPokemonRepository {
     return pokemons;
   }
 
-  @override
   Future<Pokemon> getPokemonByName(String pokemonName) async {
     final urlToSearchPokemonByName =
         "https://pokeapi.co/api/v2/pokemon/$pokemonName";
-    var response = await http.get(Uri.parse(urlToSearchPokemonByName));
+    var response = await client.get(Uri.parse(urlToSearchPokemonByName));
     if (response.statusCode != 200) {
       throw Exception('Failed to get pokemon data: ${response.statusCode}');
     }

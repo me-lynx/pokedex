@@ -7,6 +7,8 @@ abstract class PokemonState extends Equatable {
 }
 
 class PokemonInitial extends PokemonState {
+  const PokemonInitial();
+
   @override
   List<Object> get props => [];
 }
