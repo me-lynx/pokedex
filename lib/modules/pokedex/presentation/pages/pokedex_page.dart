@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pokedex/modules/pokedex/core/constants/constants.dart';
 import 'package:pokedex/modules/pokedex/data/models/pokemon.dart';
 import 'package:pokedex/modules/pokedex/presentation/blocs/pokemon/pokemon_bloc.dart';
+import 'package:pokedex/modules/pokedex/presentation/pages/loading_page.dart';
 import 'package:pokedex/modules/pokedex/presentation/pages/pokemon_info_page.dart';
 import 'package:pokedex/modules/pokedex/presentation/blocs/pokemon/pokemon_state.dart';
 import 'package:pokedex/modules/pokedex/presentation/blocs/search_pokemon/search_pokemon_bloc.dart';
@@ -38,7 +41,7 @@ class _PokedexPageState extends State<PokedexPage> {
                     padding: const EdgeInsets.all(10.0),
                     child: TextField(
                       decoration: InputDecoration(
-                        hintText: 'Pesquisar Pokemon',
+                        hintText: 'Search',
                         filled: true,
                         fillColor: Colors.black12,
                         border: OutlineInputBorder(
@@ -79,9 +82,7 @@ class _PokedexPageState extends State<PokedexPage> {
                         } else if (searchState is SearchFailure) {
                           return Text(searchState.toString());
                         } else {
-                          return Center(
-                              child: Center(
-                                  child: Image.asset('images/pokeball.gif')));
+                          return const LoadingPage();
                         }
                       },
                     ),
@@ -90,7 +91,21 @@ class _PokedexPageState extends State<PokedexPage> {
               ),
             );
           } else {
-            return Center(child: Image.asset('images/pokeball.gif'));
+            return Scaffold(
+              backgroundColor: const Color(0xFFF3FCFF),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('images/pokeball.gif'),
+                    Text(
+                      loadingPhrases[Random().nextInt(loadingPhrases.length)],
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
         },
       ),

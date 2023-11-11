@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pokedex/modules/pokedex/core/constants/constants.dart';
@@ -9,6 +11,7 @@ import 'package:pokedex/modules/pokedex/presentation/blocs/pokemon_info/pokemon_
 import 'package:pokedex/modules/pokedex/data/repositories/pokemon_repository.dart';
 import 'package:pokedex/modules/pokedex/core/utils/string_extension.dart';
 import 'package:pokedex/main.dart';
+import 'package:pokedex/modules/pokedex/presentation/pages/loading_page.dart';
 import 'package:pokedex/modules/pokedex/presentation/widgets/stats_list.dart';
 
 class PokemonInfoPage extends StatelessWidget {
@@ -25,8 +28,7 @@ class PokemonInfoPage extends StatelessWidget {
       child: BlocBuilder<PokemonInfoBloc, PokemonInfoState>(
         builder: (context, state) {
           if (state is PokemonInfoLoading) {
-            return Scaffold(
-                body: Center(child: Image.asset('images/pokeball.gif')));
+            return const LoadingPage();
           } else if (state is PokemonInfoLoaded) {
             return _Content(result: state.pokemon);
           } else if (state is PokemonInfoError) {
