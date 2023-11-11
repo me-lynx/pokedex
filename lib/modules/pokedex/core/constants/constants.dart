@@ -2,6 +2,9 @@ import 'dart:ui';
 
 class Constants {
   static Color creamColor = const Color(0xfff5f5f5);
+  static const pokedexApiUrl = "https://pokeapi.co/api/v2/pokemon/";
+  static const pokedexApiUrlWithOffsetandLimit =
+      "https://pokeapi.co/api/v2/pokemon?offset=0&limit=100";
 }
 
 const Map<String, Color> pokemonTypeMap = {
