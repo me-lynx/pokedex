@@ -8,5 +8,4 @@ class _Image extends AssetImage {
 
 class AppImages {
   static const pokeball = _Image('pokeball.png');
-  static const poketype = _Image('poketype1.png');
 }

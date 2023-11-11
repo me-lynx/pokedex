@@ -1,14 +1,17 @@
 import 'dart:convert';
 
-import 'package:pokedex/feature/models/pokemon.dart';
-import 'package:pokedex/feature/models/pokemon_result.dart';
+import 'package:pokedex/modules/pokedex/data/models/pokemon.dart';
+import 'package:pokedex/modules/pokedex/data/models/pokemon_result.dart';
 import 'package:http/http.dart' as http;
+import 'package:pokedex/modules/pokedex/data/repositories/pokemon_repository_interface.dart';
+import 'package:tuple/tuple.dart';
 
-class PokemonRepository {
+class PokemonRepository implements IPokemonRepository {
   List<Pokemon> pokemons = [];
-  String url = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=20";
+  String url = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=100";
 
-  fetchPokemons() async {
+  @override
+  Future<List<Tuple2<Pokemon, int>>> fetchPokemons() async {
     var response = await http.get(Uri.parse(url));
     if (response.statusCode != 200) {
       throw Exception('Failed to fetch pokemons: ${response.statusCode}');
@@ -22,22 +25,22 @@ class PokemonRepository {
         .map((pokemonResult) => PokemonResult.fromMap(pokemonResult))
         .toList();
 
-    var pokemons = <Pokemon>[];
+    var pokemons = <Tuple2<Pokemon, int>>[];
 
-    for (var result in pokemonResults) {
-      var pokemon = await getPokemonData(result.url);
+    for (var i = 0; i < pokemonResults.length; i++) {
+      var pokemon = await getPokemonData(pokemonResults[i].url);
+
       // ignore: unnecessary_null_comparison
       if (pokemon == null) {
-        throw Exception('Failed to get data for pokemon: ${result.url}');
+        throw Exception(
+            'Failed to get data for pokemon: ${pokemonResults[i].url}');
       }
-      pokemons.add(pokemon);
+      pokemons.add(Tuple2(pokemon, i));
     }
-
-    pokemons.sort((a, b) => (a.id ?? 0).compareTo(b.id ?? 0));
-
     return pokemons;
   }
 
+  @override
   Future<Pokemon> getPokemonByName(String pokemonName) async {
     final urlToSearchPokemonByName =
         "https://pokeapi.co/api/v2/pokemon/$pokemonName";

@@ -1,5 +1,4 @@
-import 'package:pokedex/feature/models/pokemon.dart';
-import 'package:pokedex/feature/models/pokemon_result.dart';
+import 'package:pokedex/modules/pokedex/data/models/pokemon.dart';
 
 abstract class PokemonInfoState {}
 

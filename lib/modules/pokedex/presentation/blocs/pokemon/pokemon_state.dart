@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:pokedex/feature/models/pokemon.dart';
-import 'package:pokedex/feature/models/pokemon_result.dart';
+import 'package:pokedex/modules/pokedex/data/models/pokemon.dart';
+import 'package:tuple/tuple.dart';
 
 abstract class PokemonState extends Equatable {
   const PokemonState();
@@ -12,7 +12,7 @@ class PokemonInitial extends PokemonState {
 }
 
 class PokemonLoaded extends PokemonState {
-  final List<Pokemon> pokemons;
+  final List<Tuple2<Pokemon, int>> pokemons;
 
   const PokemonLoaded(this.pokemons);
 

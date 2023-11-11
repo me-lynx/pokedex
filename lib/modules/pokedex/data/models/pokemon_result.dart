@@ -1,4 +1,4 @@
-import 'package:pokedex/feature/models/pokemon.dart';
+import 'package:pokedex/modules/pokedex/data/models/pokemon.dart';
 
 class PokemonResult {
   String name;

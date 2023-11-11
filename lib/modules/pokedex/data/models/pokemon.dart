@@ -1,4 +1,4 @@
-import 'package:pokedex/feature/models/pokemon_result.dart';
+import 'package:flutter/foundation.dart';
 
 class Pokemon {
   int? id;
@@ -34,7 +34,9 @@ class Pokemon {
   }
 
   factory Pokemon.fromMap(Map<String, dynamic> map) {
-    print('Mapping from: $map');
+    if (kDebugMode) {
+      print('Mapping from: $map');
+    }
     return Pokemon(
         map['id'],
         map['height'],

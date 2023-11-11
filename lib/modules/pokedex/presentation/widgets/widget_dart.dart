@@ -1,9 +1,6 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:pokedex/feature/widgets/animated_fade.dart';
-import 'package:pokedex/feature/pokedex/images.dart';
 
 class _BoxDecoration extends StatelessWidget {
   static const Size size = Size.square(144);
@@ -34,29 +31,8 @@ class _BoxDecoration extends StatelessWidget {
   }
 }
 
-class _DottedDecoration extends StatelessWidget {
-  static const Size size = Size(57, 31);
-
-  final Animation<double> animation;
-
-  const _DottedDecoration({required this.animation});
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedFade(
-      animation: animation,
-      child: Image(
-        image: AppImages.pokeball,
-        width: size.width,
-        height: size.height,
-        color: Colors.white30,
-      ),
-    );
-  }
-}
-
 class BackgroundDecoration extends StatefulWidget {
-  const BackgroundDecoration();
+  const BackgroundDecoration({super.key});
 
   @override
   State<BackgroundDecoration> createState() => BackgroundDecorationState();

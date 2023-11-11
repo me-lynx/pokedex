@@ -1,88 +1,96 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pokedex/constants.dart';
-import 'package:pokedex/feature/models/pokemon.dart';
-import 'package:pokedex/feature/pokedex/pokemon/bloc/pokemon_bloc.dart';
-import 'package:pokedex/feature/pokedex/pokemon_info/pokemon_info_page.dart';
-import 'package:pokedex/feature/pokedex/pokemon/bloc/pokemon_state.dart';
-import 'package:pokedex/feature/pokedex/search_pokemon/search_pokemon_bloc.dart';
-import 'package:pokedex/feature/pokedex/search_pokemon/search_pokemon_event.dart';
-import 'package:pokedex/helpers/string_extension.dart';
+import 'package:pokedex/modules/pokedex/core/constants/constants.dart';
+import 'package:pokedex/modules/pokedex/data/models/pokemon.dart';
+import 'package:pokedex/modules/pokedex/presentation/blocs/pokemon/pokemon_bloc.dart';
+import 'package:pokedex/modules/pokedex/presentation/pages/pokemon_info_page.dart';
+import 'package:pokedex/modules/pokedex/presentation/blocs/pokemon/pokemon_state.dart';
+import 'package:pokedex/modules/pokedex/presentation/blocs/search_pokemon/search_pokemon_bloc.dart';
+import 'package:pokedex/modules/pokedex/presentation/blocs/search_pokemon/search_pokemon_event.dart';
+import 'package:pokedex/modules/pokedex/presentation/blocs/search_pokemon/search_pokemon_state.dart';
+import 'package:pokedex/modules/pokedex/core/utils/string_extension.dart';
 
-class PokemonPage extends StatefulWidget {
-  const PokemonPage({super.key});
+class PokedexPage extends StatefulWidget {
+  const PokedexPage({super.key});
 
   @override
-  State<PokemonPage> createState() => _PokemonPageState();
+  State<PokedexPage> createState() => _PokedexPageState();
 }
 
-class _PokemonPageState extends State<PokemonPage> {
+class _PokedexPageState extends State<PokedexPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Pokedex', style: TextStyle(color: Colors.black)),
-        centerTitle: true,
-      ),
       body: BlocBuilder<PokemonBloc, PokemonState>(
         builder: (context, state) {
           if (state is PokemonLoaded) {
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Pesquisar Pokemon',
-                      filled: true,
-                      fillColor: Colors.black12,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      prefixIcon: Icon(Icons.search),
+            return SafeArea(
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Row(
+                      children: [],
                     ),
-                    onChanged: (value) {
-                      BlocProvider.of<SearchPokemonBloc>(context)
-                          .add(SearchUpdated(value));
-                    },
                   ),
-                ),
-                Expanded(
-                  child: GridView.builder(
+                  Padding(
                     padding: const EdgeInsets.all(10.0),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 1.4,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Pesquisar Pokemon',
+                        filled: true,
+                        fillColor: Colors.black12,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                        prefixIcon: const Icon(Icons.search),
+                      ),
+                      onChanged: (value) {
+                        BlocProvider.of<SearchPokemonBloc>(context)
+                            .add(SearchUpdated(value));
+                      },
                     ),
-                    itemCount: state.pokemons.length ?? 0,
-                    itemBuilder: (context, index) {
-                      return PokeCard(
-                        pokemon: state.pokemons[index],
-                        index: index,
-                      );
-                    },
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: BlocBuilder<SearchPokemonBloc, SearchPokemonState>(
+                      builder: (context, searchState) {
+                        if (searchState is SearchSuccess) {
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 16, right: 16),
+                            child: GridView.builder(
+                              itemCount: searchState.pokemons.length,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 1.4,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                              ),
+                              itemBuilder: (context, index) {
+                                return PokeCard(
+                                  pokemon: searchState.pokemons[index].item1,
+                                  index: searchState.pokemons[index].item2,
+                                );
+                              },
+                            ),
+                          );
+                        } else if (searchState is SearchFailure) {
+                          return Text(searchState.toString());
+                        } else {
+                          return Center(
+                              child: Center(
+                                  child: Image.asset('images/pokeball.gif')));
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
             );
-          } else if (state is PokemonError) {
-            return Text(state.message);
           } else {
-            return FutureBuilder(
-              future: Future.delayed(const Duration(seconds: 40)),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: Image.asset('images/pokeball.gif'));
-                } else {
-                  return Container();
-                }
-              },
-            );
+            return Center(child: Image.asset('images/pokeball.gif'));
           }
         },
       ),
@@ -96,7 +104,7 @@ class PokeCard extends StatelessWidget {
   final Pokemon pokemon;
   final int index;
 
-  PokeCard({super.key, required this.pokemon, required this.index});
+  const PokeCard({super.key, required this.pokemon, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -105,12 +113,7 @@ class PokeCard extends StatelessWidget {
         final itemHeight = constrains.maxHeight;
         return Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.red, Colors.black],
-            ),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.4),
@@ -164,9 +167,9 @@ class PokeCard extends StatelessWidget {
   }
 }
 
+// ignore: camel_case_types
 class _buildPokemonType extends StatelessWidget {
   const _buildPokemonType({
-    super.key,
     required this.index,
     required this.pokemon,
   });
@@ -207,9 +210,9 @@ class _buildPokemonType extends StatelessWidget {
   }
 }
 
+// ignore: camel_case_types
 class _buildPokemonName extends StatelessWidget {
   const _buildPokemonName({
-    super.key,
     required this.index,
     required this.pokemon,
   });
