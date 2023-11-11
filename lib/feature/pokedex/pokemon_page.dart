@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pokedex/constants.dart';
 import 'package:pokedex/feature/models/pokemon.dart';
-import 'package:pokedex/feature/pokedex/images.dart';
 import 'package:pokedex/feature/pokedex/pokemon/bloc/pokemon_bloc.dart';
 import 'package:pokedex/feature/pokedex/pokemon_info/pokemon_info_page.dart';
 import 'package:pokedex/feature/pokedex/pokemon/bloc/pokemon_state.dart';
+import 'package:pokedex/feature/pokedex/search_pokemon/search_pokemon_bloc.dart';
+import 'package:pokedex/feature/pokedex/search_pokemon/search_pokemon_event.dart';
+import 'package:pokedex/helpers/string_extension.dart';
 
 class PokemonPage extends StatefulWidget {
   const PokemonPage({super.key});
@@ -40,7 +43,10 @@ class _PokemonPageState extends State<PokemonPage> {
                       ),
                       prefixIcon: Icon(Icons.search),
                     ),
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      BlocProvider.of<SearchPokemonBloc>(context)
+                          .add(SearchUpdated(value));
+                    },
                   ),
                 ),
                 Expanded(
@@ -85,7 +91,6 @@ class _PokemonPageState extends State<PokemonPage> {
 }
 
 class PokeCard extends StatelessWidget {
-  static const double _pokeballFraction = 0.75;
   static const double _pokemonFraction = 0.76;
 
   final Pokemon pokemon;
@@ -100,8 +105,12 @@ class PokeCard extends StatelessWidget {
         final itemHeight = constrains.maxHeight;
         return Container(
           decoration: BoxDecoration(
-            color: Colors.red,
             borderRadius: BorderRadius.circular(15),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.red, Colors.black],
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.4),
@@ -128,26 +137,9 @@ class PokeCard extends StatelessWidget {
                 highlightColor: Colors.white10,
                 child: Stack(
                   children: [
-                    _buildPokeballDecoration(height: itemHeight),
                     _buildPokemonImage(height: itemHeight, index: index),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-                        child: Hero(
-                          tag: index.toString() + pokemon.name,
-                          child: Text(
-                            pokemon.name.toUpperCase(),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              height: 0.7,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    _buildPokemonName(index: index, pokemon: pokemon),
+                    _buildPokemonType(index: index, pokemon: pokemon),
                   ],
                 ),
               ),
@@ -158,31 +150,93 @@ class PokeCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPokeballDecoration({required double height}) {
-    final pokeballSize = height * _pokeballFraction;
-
-    return Positioned(
-      bottom: -height * 0.13,
-      right: -height * 0.03,
-      child: Image(
-        image: AppImages.pokeball,
-        width: pokeballSize,
-        height: pokeballSize,
-        color: Colors.white.withOpacity(0.14),
-      ),
-    );
-  }
-
   Widget _buildPokemonImage({required double height, required int index}) {
     final pokemonSize = height * _pokemonFraction;
 
     return Positioned(
-      bottom: -2,
-      right: 1,
+      bottom: 2,
+      right: 3,
       child: Image.network(
           height: pokemonSize,
           fit: BoxFit.fill,
           'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${index + 1}.png'),
+    );
+  }
+}
+
+class _buildPokemonType extends StatelessWidget {
+  const _buildPokemonType({
+    super.key,
+    required this.index,
+    required this.pokemon,
+  });
+
+  final int index;
+  final Pokemon pokemon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            color: Colors.black.withOpacity(0.4),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Hero(
+                tag: index.toString() + pokemon.types[0].types,
+                child: Text(
+                  pokemon.types[0].types.capitalize(),
+                  style: GoogleFonts.roboto(
+                    textStyle: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                        letterSpacing: .6),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _buildPokemonName extends StatelessWidget {
+  const _buildPokemonName({
+    super.key,
+    required this.index,
+    required this.pokemon,
+  });
+
+  final int index;
+  final Pokemon pokemon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
+        child: Hero(
+          tag: index.toString() + pokemon.name,
+          child: Text(
+            pokemon.name.capitalize(),
+            style: GoogleFonts.roboto(
+              textStyle: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                  letterSpacing: .5),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

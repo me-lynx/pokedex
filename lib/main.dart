@@ -6,6 +6,7 @@ import 'package:pokedex/feature/pokedex/pokemon/bloc/pokemon_event.dart';
 import 'package:pokedex/feature/pokedex/pokemon_info/bloc/pokemon_info_bloc.dart';
 import 'package:pokedex/feature/pokedex/pokemon_page.dart';
 import 'package:pokedex/feature/pokedex/pokemon_repository.dart';
+import 'package:pokedex/feature/pokedex/search_pokemon/search_pokemon_bloc.dart';
 import 'package:pokedex/helpers/simple_bloc_observer.dart';
 
 final getIt = GetIt.instance;
@@ -41,6 +42,10 @@ class MyApp extends StatelessWidget {
             BlocProvider<PokemonInfoBloc>(
               create: (context) =>
                   PokemonInfoBloc(context.read<PokemonRepository>()),
+            ),
+            BlocProvider(
+              create: (context) => SearchPokemonBloc(
+                  pokemonBloc: BlocProvider.of<PokemonBloc>(context)),
             ),
           ],
           child: const PokemonPage(),

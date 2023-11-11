@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pokedex/constants.dart';
 import 'package:pokedex/feature/models/pokemon.dart';
 
@@ -8,7 +9,9 @@ import 'package:pokedex/feature/pokedex/pokemon_info/bloc/pokemon_info_bloc.dart
 import 'package:pokedex/feature/pokedex/pokemon_info/bloc/pokemon_info_event.dart';
 import 'package:pokedex/feature/pokedex/pokemon_info/bloc/pokemon_info_state.dart';
 import 'package:pokedex/feature/pokedex/pokemon_repository.dart';
+import 'package:pokedex/helpers/string_extension.dart';
 import 'package:pokedex/main.dart';
+import 'package:pokedex/stats_list.dart';
 
 class PokemonInfoPage extends StatelessWidget {
   final Pokemon pokemon;
@@ -76,32 +79,100 @@ class _ContentState extends State<Content> {
               ),
             ),
             Positioned(
-              top: 60,
-              left: 20,
-              right: 0,
+              top: height * 0.2,
+              left: width * 0.2,
               child: Text(
-                widget.result.name.toUpperCase(),
-                style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold),
+                widget.result.name.capitalize(),
+                style: GoogleFonts.robotoFlex(
+                  textStyle: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black,
+                      letterSpacing: 1.0),
+                ),
               ),
             ),
             Positioned(
-              bottom: 0,
+              bottom: 1,
               child: Container(
                 width: width,
                 height: height * 0.6,
                 decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30))),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(22.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              color:
+                                  pokemonTypeMap[widget.result.types[0].types]!
+                                      .withOpacity(0.4),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Text(
+                                  widget.result.types[0].types.capitalize(),
+                                  style: GoogleFonts.roboto(
+                                    textStyle: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black,
+                                        letterSpacing: .6),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              color:
+                                  pokemonTypeMap[widget.result.types[0].types]!
+                                      .withOpacity(0.2),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Text(
+                                  'Weight ${widget.result.height.toString()}',
+                                  style: GoogleFonts.roboto(
+                                    textStyle: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black,
+                                        letterSpacing: .6),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                          child: BaseStatsList(stats: widget.result.stats)),
+                    ],
+                  ),
+                ),
               ),
             ),
             Positioned(
               top: 100,
-              left: width * 0.2,
+              left: width * 0.5,
               height: 200,
               child: Image.network(
                 widget.result.imageUrl,
@@ -113,14 +184,44 @@ class _ContentState extends State<Content> {
   }
 }
 
-Future<List<Types>> getPokemonTypesfromApi(String pokemonName) async {
-  final pokemonRepository = getIt<PokemonRepository>();
+// ignore: camel_case_types
+class _buildPokemonType extends StatelessWidget {
+  const _buildPokemonType({
+    super.key,
+    required this.pokemon,
+  });
 
-  final response = await pokemonRepository.getPokemonData(pokemonName);
+  final Pokemon pokemon;
 
-  if (response is Pokemon) {
-    return response.types;
-  } else {
-    throw Exception('Failed to load Pokemon types');
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            color: Colors.black.withOpacity(0.4),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Hero(
+                tag: pokemon.toString() + pokemon.types[0].types,
+                child: Text(
+                  pokemon.types[0].types.capitalize(),
+                  style: GoogleFonts.roboto(
+                    textStyle: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                        letterSpacing: .6),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
