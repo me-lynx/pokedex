@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pokedex/constants.dart';
+import 'package:pokedex/feature/models/pokemon.dart';
 import 'package:pokedex/feature/pokedex/images.dart';
 import 'package:pokedex/feature/pokedex/pokemon/bloc/pokemon_bloc.dart';
 import 'package:pokedex/feature/pokedex/pokemon_info/pokemon_info_page.dart';
-import 'package:pokedex/feature/models/pokemon_model.dart';
 import 'package:pokedex/feature/pokedex/pokemon/bloc/pokemon_state.dart';
 
 class PokemonPage extends StatefulWidget {
@@ -52,7 +53,7 @@ class _PokemonPageState extends State<PokemonPage> {
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                     ),
-                    itemCount: state.pokemons.length,
+                    itemCount: state.pokemons.length ?? 0,
                     itemBuilder: (context, index) {
                       return PokeCard(
                         pokemon: state.pokemons[index],
@@ -103,7 +104,7 @@ class PokeCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: Colors.red.withOpacity(0.4),
+                color: Colors.black.withOpacity(0.4),
                 blurRadius: 15,
                 offset: const Offset(0, 8),
               ),
@@ -112,7 +113,7 @@ class PokeCard extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: Material(
-              color: Colors.green,
+              color: pokemonTypeMap[pokemon.types[0].types],
               child: InkWell(
                 onTap: () {
                   Navigator.push(

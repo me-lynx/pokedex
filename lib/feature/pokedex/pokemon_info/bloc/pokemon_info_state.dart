@@ -1,11 +1,12 @@
-import 'package:pokedex/feature/models/pokemon_model.dart';
+import 'package:pokedex/feature/models/pokemon.dart';
+import 'package:pokedex/feature/models/pokemon_result.dart';
 
 abstract class PokemonInfoState {}
 
 class PokemonInfoLoading extends PokemonInfoState {}
 
 class PokemonInfoLoaded extends PokemonInfoState {
-  Future<Pokemon> pokemon;
+  Pokemon pokemon;
 
   PokemonInfoLoaded(this.pokemon);
 }
